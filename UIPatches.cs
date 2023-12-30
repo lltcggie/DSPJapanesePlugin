@@ -20,7 +20,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Networking;
-using TranslationCommon.SimpleJSON;
 using System.Security;
 using System.Security.Permissions;
 
@@ -57,7 +56,7 @@ namespace DSPJapanesePlugin
             GameObject droneTitle = __instance.transform.Find("module-group/drone/drone-title").gameObject;
             droneTitle.GetComponent<RectTransform>().sizeDelta = new Vector2(80f, 20f);
         }
-        
+
         //タレットウインドウの修正 Version 0.10.28.20856
         [HarmonyPostfix, HarmonyPatch(typeof(UITurretWindow), "_OnCreate")]
         public static void UITurretWindow_OnCreate_Patch(UITurretWindow __instance)
@@ -437,18 +436,18 @@ namespace DSPJapanesePlugin
         //セーブ＆ロード確認MessageBoxのフォント変更
         //新しく作られるのでフォントの変更
         [HarmonyPostfix, HarmonyPatch(typeof(UIDialog), "CreateDialog")]
-                public static void UIMessageBox_Show_Patch() //UIDialog __result)
+        public static void UIMessageBox_Show_Patch() //UIDialog __result)
+        {
+            if (Main.EnableFixUI.Value)
+            {
+                var texts = GameObject.Find("UI Root/Overlay Canvas/DialogGroup/MessageBox VE(Clone)/Window/Body").GetComponentsInChildren<Text>();
+                //var texts = Resources.FindObjectsOfTypeAll(typeof(Text)) as Text[];
+                foreach (var text in texts)
                 {
-                    if (Main.EnableFixUI.Value)
-                    {
-                        var texts = GameObject.Find("UI Root/Overlay Canvas/DialogGroup/MessageBox VE(Clone)/Window/Body").GetComponentsInChildren<Text>();
-                        //var texts = Resources.FindObjectsOfTypeAll(typeof(Text)) as Text[];
-                        foreach (var text in texts)
-                        {
-                            text.font = Main.newFont;
-                        }
-                    }
+                    text.font = Main.newFont;
                 }
+            }
+        }
 
         //    //UIRandomTipのフック：バルーンチップのサイズ調整
         //    [HarmonyPostfix, HarmonyPatch(typeof(UIRandomTip), "_OnOpen")]
@@ -473,62 +472,62 @@ namespace DSPJapanesePlugin
 
         //新規開始画面の恒星タイプ名の文字位置調整
         [HarmonyPostfix, HarmonyPatch(typeof(UIGalaxySelect), "_OnOpen")]
-                static void UpdateUIDisplayPatch(UIGalaxySelect __instance)
-                {
-                    if (Main.EnableFixUI.Value)
-                    {
-                        MoveStarCount("m-star");
-                        MoveStarCount("k-star");
-                        MoveStarCount("g-star");
-                        MoveStarCount("f-star");
-                        MoveStarCount("a-star");
-                        MoveStarCount("b-star");
-                        MoveStarCount("o-star");
-                        MoveStarCount("n-star");
-                        MoveStarCount("wd-star");
-                        MoveStarCount("bh-star");
-                    }
-                }
+        static void UpdateUIDisplayPatch(UIGalaxySelect __instance)
+        {
+            if (Main.EnableFixUI.Value)
+            {
+                MoveStarCount("m-star");
+                MoveStarCount("k-star");
+                MoveStarCount("g-star");
+                MoveStarCount("f-star");
+                MoveStarCount("a-star");
+                MoveStarCount("b-star");
+                MoveStarCount("o-star");
+                MoveStarCount("n-star");
+                MoveStarCount("wd-star");
+                MoveStarCount("bh-star");
+            }
+        }
 
-                static void MoveStarCount(string starType)
-                {
-                    GameObject starSet = GameObject.Find("UI Root/Overlay Canvas/Galaxy Select/right-group/" + starType);
-                    float y = starSet.transform.localPosition.y;
-                    starSet.transform.localPosition = new Vector3(-15f, y, 0);
-                    starSet.transform.Find("count").transform.localPosition = new Vector3(-220f, 0, 0);
-                    starSet.transform.Find("Image").transform.localPosition = new Vector3(-212f, -16f, 0);
-                }
+        static void MoveStarCount(string starType)
+        {
+            GameObject starSet = GameObject.Find("UI Root/Overlay Canvas/Galaxy Select/right-group/" + starType);
+            float y = starSet.transform.localPosition.y;
+            starSet.transform.localPosition = new Vector3(-15f, y, 0);
+            starSet.transform.Find("count").transform.localPosition = new Vector3(-220f, 0, 0);
+            starSet.transform.Find("Image").transform.localPosition = new Vector3(-212f, -16f, 0);
+        }
 
 
         //    //UIAssemblerWindowのフック：コピー＆ペーストボタンのサイズ拡大
-    //    [HarmonyPostfix, HarmonyPatch(typeof(UIAssemblerWindow), "_OnOpen")]
-    //    //static void UIAssemblerWindow_OnOpen_Patch(UIButton ___resetButton, UIButton ___copyButton, UIButton ___pasteButton)
-    //    //{
-    //    //    if (Main.EnableFixUI.Value)
-    //    //    {
+        //    [HarmonyPostfix, HarmonyPatch(typeof(UIAssemblerWindow), "_OnOpen")]
+        //    //static void UIAssemblerWindow_OnOpen_Patch(UIButton ___resetButton, UIButton ___copyButton, UIButton ___pasteButton)
+        //    //{
+        //    //    if (Main.EnableFixUI.Value)
+        //    //    {
 
-    //    //        //LogManager.Logger.LogInfo("copyButton");
-    //    //        Text copyText = ___copyButton.GetComponent<Text>();
-    //    //        if (copyText != null)
-    //    //        {
-    //    //            float width = copyText.preferredWidth;
-    //    //            float height = copyText.preferredHeight;
+        //    //        //LogManager.Logger.LogInfo("copyButton");
+        //    //        Text copyText = ___copyButton.GetComponent<Text>();
+        //    //        if (copyText != null)
+        //    //        {
+        //    //            float width = copyText.preferredWidth;
+        //    //            float height = copyText.preferredHeight;
 
-    //    //            RectTransform trs = (RectTransform)___copyButton.button.transform;
+        //    //            RectTransform trs = (RectTransform)___copyButton.button.transform;
 
-    //    //            trs.offsetMin = new Vector2(-35, trs.offsetMin.y);
-    //    //            trs.offsetMax = new Vector2(35, trs.offsetMax.y);
-    //    //        }
-    //    //        // LogManager.Logger.LogInfo("pasteButton");
-    //    //        Text pasteText = ___pasteButton.GetComponent<Text>();
-    //    //        if (pasteText != null)
-    //    //        {
-    //    //            RectTransform trs = (RectTransform)___pasteButton.button.transform;
-    //    //            trs.offsetMin = new Vector2(10, trs.offsetMin.y);
-    //    //            trs.offsetMax = new Vector2(80, trs.offsetMax.y);
-    //    //        }
-    //    //    }
-    //    //}
+        //    //            trs.offsetMin = new Vector2(-35, trs.offsetMin.y);
+        //    //            trs.offsetMax = new Vector2(35, trs.offsetMax.y);
+        //    //        }
+        //    //        // LogManager.Logger.LogInfo("pasteButton");
+        //    //        Text pasteText = ___pasteButton.GetComponent<Text>();
+        //    //        if (pasteText != null)
+        //    //        {
+        //    //            RectTransform trs = (RectTransform)___pasteButton.button.transform;
+        //    //            trs.offsetMin = new Vector2(10, trs.offsetMin.y);
+        //    //            trs.offsetMax = new Vector2(80, trs.offsetMax.y);
+        //    //        }
+        //    //    }
+        //    //}
 
     }
 }

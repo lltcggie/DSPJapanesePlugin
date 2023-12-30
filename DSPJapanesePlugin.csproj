@@ -95,25 +95,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GASAccess.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="NewStrings.cs" />
-    <Compile Include="TranslatePatches.cs" />
+    <Compile Include="TranslatePatches.cs" />    
     <Compile Include="UIPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleJSON\SimpleJSON.cs" />
-    <Compile Include="SimpleJSON\SimpleJSONBinary.cs" />
-    <Compile Include="SimpleJSON\SimpleJSONBuilder.cs" />
-    <Compile Include="SimpleJSON\SimpleJSONDotNetTypes.cs" />
-    <Compile Include="SimpleJSON\SimpleJSONUnity.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="SimpleJSON\Changelog.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="newjpfont" />
-    <None Include="SimpleJSON\LICENSE" />
-    <None Include="SimpleJSON\README" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
