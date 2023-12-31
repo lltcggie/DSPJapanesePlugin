@@ -2,6 +2,7 @@
 import pandas as pd
 import os
 import csv
+import re
 
 bom = '\ufeff'
 
@@ -37,6 +38,13 @@ def japanese_tsv_to_dict(tsv_path, key_name, value_name, skiprows):
 
     return japanese
 
+def replace_text(text):
+    text = text.replace("[LF]", "\\r\\n")
+    text = text.replace("[CRLF]", "\\r\\n")
+    text = re.sub(r'\\u00A0', '\u00A0', text, flags=re.IGNORECASE)
+    text = text.replace("ダークフォグ", "黒霧")
+    return text
+
 def gen_1041_txt(txt_name, japanese):
     data = pd.read_csv(os.path.join('1033', txt_name), sep='\t', encoding='utf-16-le', header=None, names=['key', 'none', 'num', 'text'])
 
@@ -45,8 +53,7 @@ def gen_1041_txt(txt_name, japanese):
         if key in japanese:
             value = japanese[key]
             if value is not None:
-                value = value.replace("[LF]", "\\r\\n")
-                value = value.replace("ダークフォグ", "黒霧")
+                value = replace_text(value)
                 data.at[i, 'text'] = value
         else:
             print("Column2が{}の行はありません。".format(key))
@@ -60,8 +67,7 @@ def gen_1041_txt_new(txt_name, japanese):
         file.write(bom)
         for key, value in japanese.items():
             if value is not None:
-                value = value.replace("[LF]", "\\r\\n")
-                value = value.replace("ダークフォグ", "黒霧")
+                value = replace_text(value)
                 file.write('{0}\t\t0\t{1}\n'.format(key, value))
 
 def gen_1041():
